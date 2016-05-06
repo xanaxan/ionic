@@ -1,0 +1,33 @@
+
+<ion-navbar *navbar>
+  <!--<ion-title>
+    Spendings <ion-icon name="cash"></ion-icon>
+  </ion-title>-->
+</ion-navbar>
+
+<ion-content class="page3">
+  <button block (click)="openSpendingCategory()">
+    Spent money for what?
+  </button>
+  <ion-item>
+    {{selectedSpendingCategory}}
+  </ion-item>
+  <button block (click)="showDatePicker()">
+    Date
+  </button>
+  <ion-item>
+    <ion-input [(ngModel)]="selectedDate"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-input placeholder="€" type="number" [(ngModel)]="amount"></ion-input>
+  </ion-item>
+</ion-content>
+
+<ion-toolbar position="bottom" dark>
+  <!--<ion-buttons middle>-->
+    <button (click)="submitSpending()">
+      Submit
+      <ion-icon name="send"></ion-icon>
+    </button>
+  <!--</ion-buttons>-->
+</ion-toolbar>

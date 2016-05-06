@@ -1,0 +1,31 @@
+<ion-navbar *navbar>
+  <!--<ion-title>Tab 1</ion-title>-->
+</ion-navbar>
+
+<ion-content>
+  <ion-list>
+    <ion-item-sliding *ngFor="#spending of spendings | orderBy : sorting()">
+      <ion-item class="spendings-list-item">
+        <div class="spendings-list--date">{{spending.date}}</div>
+        <div class="spendings-list--category">{{spending.category}}</div>
+        <div class="spendings-list--amount">{{spending.amount}} €</div>
+      </ion-item>
+      <ion-item-options>
+        <button danger (click)="deleteItem(spending)">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>
+
+<ion-toolbar position="bottom">
+  <!--<ion-buttons middle>-->
+    <button (click)="changeSortingColumn()">
+      {{sortingColumn}}
+    </button>
+    <button (click)="changeSortingDirection()">
+      <ion-icon name="{{sortingDirection === '' ? 'arrow-round-up' : 'arrow-round-down'}}"></ion-icon>
+    </button>
+  <!--</ion-buttons>-->
+</ion-toolbar>

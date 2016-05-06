@@ -1,0 +1,99 @@
+import {Page} from 'ionic-angular';
+import {Observable} from 'rxjs/Observable';
+import {AngularFire,FirebaseListObservable} from 'angularfire2';
+import {NgZone} from 'angular2/core';
+import {OrderBy} from '../../pipes/orderby.pipe';
+import {Spending} from '../../commons/spending';
+import {DateUtil} from '../../commons/dateutil';
+
+import * as Firebase from 'firebase';
+
+
+@Page({
+  templateUrl: 'build/pages/page1/page1.html',
+  pipes: [OrderBy]
+})
+export class Page1 {
+  items: Observable<any[]>;
+  allspendings: FirebaseListObservable<any[]>;
+  flattenedSpendings: Array<Spending>;
+  questions: FirebaseListObservable<any[]>;
+  
+  sortingColumnCounter: number = 0;
+  columns: string[] = ['date','category','amount'];
+  sortingDirection: string = '-';
+  sortingColumn = this.columns[this.sortingColumnCounter];
+
+  constructor(private af: AngularFire, private ngZone: NgZone, private dateutil: DateUtil) {
+    // this.ngZone.run(() => {
+      this.allspendings = af.list('/spendings');
+      this.flattenedSpendings = [];
+      var i = 1;
+      this.allspendings.forEach((next1: any[]) => {
+        console.log('next1');
+        console.log(next1);
+        for (var k in next1) {
+          console.log(k);
+          console.log(next1[k]);
+          var next2 = next1[k];
+          for (var l in next2) {
+            console.log(next2[l]);
+            console.log(next2[l].date);
+            this.flattenedSpendings.push({
+                key: l,
+                date: next2[l].date,
+                category: next2[l].category,
+                amount: next2[l].amount
+            });
+          }
+        }
+      }, () => {console.log('hui');});
+        // this.flattenedSpendings = [];
+        // next1.forEach((next2: any) => {
+        //   console.log('next2');
+        //   console.log(next2);
+        //   for(var key in next2) {
+        //     var value = next2[key];
+        //     if (typeof value === 'object') {
+        //       this.flattenedSpendings.push({
+        //         key: key,
+        //         date: value.date,
+        //         category: value.category,
+        //         amount: value.amount
+        //       });
+        //     }              
+        //   }
+        // });
+      // }, []);
+      console.log('finished');
+      console.log(this.flattenedSpendings);
+  }
+  
+  ngAfterViewInit() {}
+  
+  deleteItem(spending) {
+    console.log(spending.key);
+    var removePath = this.dateutil.makeFBDateChild(spending.date);
+    console.log(removePath);
+    this.allspendings.remove(removePath + '/' + spending.key);
+  }
+  
+  sorting(): string {
+    return this.sortingDirection + this.sortingColumn;
+  }
+  
+  changeSortingColumn() {
+    if (++this.sortingColumnCounter > this.columns.length - 1) {
+      this.sortingColumnCounter = 0;
+    }
+    this.sortingColumn = this.columns[this.sortingColumnCounter];
+  }
+  
+  changeSortingDirection() {
+    if (this.sortingDirection === '-') {
+      this.sortingDirection = '';
+    } else {
+      this.sortingDirection = '-';
+    }
+  }
+}
