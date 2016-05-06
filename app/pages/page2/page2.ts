@@ -26,11 +26,27 @@ export class Page2 {
   }
 
   doFirebase() {
-    var ref = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings");
+    var ref: Firebase = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings");
     this.giveittome(ref);
   }
 
-  giveittome(ref) {
+  giveittome(ref: Firebase) {
+    this.spendings = [];
+    ref.once("value", (snapshot) => {
+      var obj = snapshot.exportVal();
+      for (var monthKey in obj) {
+        var month = obj[monthKey];
+        console.log(monthKey); console.log(month);
+        for (var itemKey in month) {
+          var item = month[itemKey];
+          console.log(itemKey); console.log(item);
+          this.spendings.push({ key: itemKey, date: item.date, category: item.category, amount: item.amount });
+        }
+      }
+    });
+  }
+
+  /*giveittome(ref) {
     this.spendings = [];
     ref.once("value", (snapshot) => {
       // The callback function will get called twice, once for "fred" and once for "barney"
@@ -52,7 +68,7 @@ export class Page2 {
         // debugger;
       });
     });
-  }
+  }*/
 
   //    this.no.forEach((nos) =>{  // foreach statement
   //             document.write(" number=:"+nos);
@@ -64,10 +80,10 @@ export class Page2 {
   }
 
   ngAfterViewInit() {
-    console.log('afterviewinit'); 
+    console.log('afterviewinit');
   }
   doit() {
-    var consolidated = this.spendings.reduce((result:Array<Spending>, curr) => {  
+    var consolidated = this.spendings.reduce((result: Array<Spending>, curr) => {
       var exists = false;
       result.forEach(function (valueFE, key) {
         if (!exists && valueFE.category === curr.category) {
@@ -91,7 +107,7 @@ export class Page2 {
     }
   }
 
-  generateChart(arr:Array<Spending>) {
+  generateChart(arr: Array<Spending>) {
     this.chart = c3.generate({
       data: {
         columns: [
