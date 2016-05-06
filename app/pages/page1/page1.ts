@@ -33,20 +33,6 @@ export class Page1 {
   ngAfterViewInit() {
     this.spendingsRef.on("value", (snapshot: FirebaseDataSnapshot) => {
       this.extract(snapshot.exportVal());
-      // console.log(snapshot.val());
-      // snapshot.forEach((childSnapshot: FirebaseDataSnapshot) => {
-      //   childSnapshot.forEach((itemSnapshot: FirebaseDataSnapshot) => {
-      //     var key = itemSnapshot.key();
-      //     var item = itemSnapshot.val();
-      //     this.spendings.push({
-      //       key: key,
-      //       date: item.date,
-      //       category: item.category,
-      //       amount: item.amount
-      //     });
-      //     console.log(item);
-        // });
-      // });
     });
   }
   
