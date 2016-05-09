@@ -19,7 +19,7 @@ export class Page1 {
   spendingsTemp: Array<Spending> = [];
   spendings: Array<Spending> = [];
   questions: FirebaseListObservable<any[]>;
-  spendingsRef: Firebase = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings");
+  recordsRef: Firebase = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings/records");
   
   sortingColumnCounter: number = 0;
   columns: string[] = ['date','category','amount'];
@@ -31,7 +31,7 @@ export class Page1 {
   }
   
   ngAfterViewInit() {
-    this.spendingsRef.on("value", (snapshot: FirebaseDataSnapshot) => {
+    this.recordsRef.on("value", (snapshot: FirebaseDataSnapshot) => {
       this.extract(snapshot.exportVal());
     });
   }
@@ -40,10 +40,10 @@ export class Page1 {
     this.spendings = []
     for (var monthKey in obj) {
       var month = obj[monthKey];
-      console.log(monthKey); console.log(month);
+      // console.log(monthKey); console.log(month);
       for (var itemKey in month) {
         var item = month[itemKey];
-        console.log(itemKey); console.log(item);
+        // console.log(itemKey); console.log(item);
         this.spendings.push({key:itemKey, date:item.date, category:item.category, amount:item.amount});
       }
     }
@@ -52,7 +52,7 @@ export class Page1 {
   deleteItem(spending) {
     var removePath = this.dateutil.makeFBDateChild(spending.date);
     console.log(removePath);
-    var removeRef = this.spendingsRef.child(removePath + '/' + spending.key);
+    var removeRef = this.recordsRef.child(removePath + '/' + spending.key);
     removeRef.remove(this.onComplete);
   }
   

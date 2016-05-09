@@ -26,7 +26,7 @@ export class Page2 {
   }
 
   doFirebase() {
-    var ref: Firebase = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings");
+    var ref: Firebase = new Firebase("https://blistering-heat-8491.firebaseio.com/spendings/records");
     this.giveittome(ref);
   }
 

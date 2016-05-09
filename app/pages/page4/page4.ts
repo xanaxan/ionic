@@ -4,33 +4,35 @@ import {DateUtil} from '../../commons/dateutil';
 // import {NgClass} from 'angular2/common';
 
 @Page({
-  templateUrl: 'build/pages/page3/page3.html'
+  templateUrl: 'build/pages/page4/page4.html'
 })
-export class Page3 {
+export class Page4 {
+  newCategory: string = '';
   selectedSpendingCategory: string = '';
   selectedSpendingSubCategory: string = '';
-  selectedDate: string;
-  amount = '';
-  recordsRef: Firebase;
   spendingCategoriesRef: Firebase;
   categories: Array<any> = [];
   subCategories: Array<any> = [];
   subCategoriesObjects: Object = [];
   
-  constructor(public platform: Platform, public nav: NavController, private dateutil: DateUtil) {
-    this.selectedDate = this.dateutil.formatDate(new Date());
-    this.recordsRef = new Firebase('https://blistering-heat-8491.firebaseio.com/spendings/records');
-    
+  constructor(public platform: Platform, public nav: NavController, private dateutil: DateUtil) {  
     this.spendingCategoriesRef = new Firebase('https://blistering-heat-8491.firebaseio.com/spendings/administration/spending-categories');
     this.spendingCategoriesRef.on("value", (data: FirebaseDataSnapshot) => {
       var cats = data.exportVal();
       this.categories = [];
       this.subCategoriesObjects = {};
+      var hightestKey = 0;
       for (var key1 in cats) {
         if (Number.isInteger(parseInt(key1))) {
           this.categories.push(cats[key1]);
         } else {
-          this.categories.push(key1);
+          var text = key1 + ' -';
+          var subs = cats[key1];
+          for (var key2 in subs) {
+            text += ' ' + subs[key2];
+            console.log(subs[key2]);
+          }
+          this.categories.push(text);
           this.subCategoriesObjects[key1] = cats[key1];
         }
       }
@@ -53,38 +55,46 @@ export class Page3 {
     console.log(category);
     this.selectedSpendingSubCategory = category;
   }
-  
-  showDatePicker() {
-    DatePicker.show({
-      date: this.dateutil.parseString(this.selectedDate),
-      mode: 'date'
-    }).then(
-      date => this.selectedDate = this.dateutil.formatDate(date),
-      err => console.log("Error occurred while getting date:", err)
-      );
-  }
 
-  submitSpending() {
-    var refYearMonth = this.recordsRef.child(this.dateutil.makeFBDateChild(this.selectedDate));
-    var cat = this.selectedSpendingCategory;
-    if (this.selectedSpendingSubCategory != '') {
-      cat += ' - ' + this.selectedSpendingSubCategory;
+  save(inputCategory, inputSubcategory) {
+    console.log(inputCategory);
+    var highestKey = 0;
+    var tempRef = this.spendingCategoriesRef;
+    var cats;
+    
+    if (inputSubcategory != undefined) {
+      console.log('inputSubcategory: ' + inputSubcategory);
+      tempRef = this.spendingCategoriesRef.child('/' + inputCategory);
     }
-    refYearMonth.push().set({
-      category: cat,
-      date: this.selectedDate,
-      amount: this.amount
+    
+    tempRef.once("value", (data: FirebaseDataSnapshot) => {
+      cats = data.exportVal();
     });
+    
+    for (var key1 in cats) {
+      if (Number.isInteger(parseInt(key1)) && parseInt(key1) > highestKey) {
+        highestKey = parseInt(key1);
+      }
+    }
 
-    this.selectedSpendingCategory = '';
-    this.selectedSpendingSubCategory = '';
-    this.subCategories = [];
-    this.amount = '';
+    highestKey++;
+    console.log(highestKey);
+    if (inputSubcategory != undefined) {
+      console.log('bb');
+      var o = {[highestKey]: inputSubcategory};
+    } else {
+      var o = {[highestKey]: inputCategory};
+    }
+    tempRef.update(o);
+    
+    
 
     this.nav.present(Toast.create({
       message: 'Added to Firebase!',
-      duration: 1000,
+      duration: 500,
       cssClass: 'toast-light'
     }));
   }
+  
+  
 }

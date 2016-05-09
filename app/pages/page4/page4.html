@@ -1,0 +1,18 @@
+
+<ion-navbar *navbar>
+  <!--<ion-title>
+    Tab 2
+  </ion-title>-->
+</ion-navbar>
+
+<ion-content class="page4">
+  <ion-list>
+    <ion-item *ngFor="#cat of categories">
+      {{cat}}
+    </ion-item>
+  </ion-list>
+  <ion-input [(ngModel)]="inputCategory" placeholder="Category"></ion-input>
+  <ion-input [(ngModel)]="inputSubcategory" placeholder="Subcategory"></ion-input>
+  <button (click)="inputSubcategory = undefined; inputCategory = undefined">Clear</button>
+  <button (click)="save(inputCategory, inputSubcategory)">Save</button>
+</ion-content>
