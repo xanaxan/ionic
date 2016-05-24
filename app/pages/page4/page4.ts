@@ -1,6 +1,7 @@
 import {Page, ActionSheet, NavController, Platform, Toast} from 'ionic-angular';
 import {DatePicker} from 'ionic-native';
 import {DateUtil} from '../../commons/dateutil';
+import {Category} from '../../commons/category';
 // import {NgClass} from 'angular2/common';
 
 @Page({
@@ -8,10 +9,10 @@ import {DateUtil} from '../../commons/dateutil';
 })
 export class Page4 {
   newCategory: string = '';
-  selectedSpendingCategory: string = '';
+  selectedCategory: Category;
   selectedSpendingSubCategory: string = '';
   spendingCategoriesRef: Firebase;
-  categories: Array<any> = [];
+  categories: Array<Category> = [];
   subCategories: Array<any> = [];
   subCategoriesObjects: Object = [];
   
@@ -24,36 +25,32 @@ export class Page4 {
       var hightestKey = 0;
       for (var key1 in cats) {
         if (Number.isInteger(parseInt(key1))) {
-          this.categories.push(cats[key1]);
+          this.categories.push({text: cats[key1], path: '/' + key1, subcategories: null});
         } else {
           var text = key1 + ' -';
           var subs = cats[key1];
+          var subArr: Array<Category> = [];
           for (var key2 in subs) {
+            subArr.push({text: subs[key2], path: '/' + key1 + '/' + key2, subcategories: null});
             text += ' ' + subs[key2];
             console.log(subs[key2]);
           }
-          this.categories.push(text);
+          this.categories.push({text: key1, path: '/' + key1, subcategories: subArr});
           this.subCategoriesObjects[key1] = cats[key1];
         }
       }
     });
   }
   
-  selectCategory(category: string) {
-    console.log(this.subCategoriesObjects[category]);
-    this.subCategories = [];
-    var data = this.subCategoriesObjects[category];
-    for (var key in data) {
-      this.subCategories.push(data[key]);
-      console.log(this.subCategories);
-      console.log(this.categories);
-    }
-    this.selectedSpendingCategory = category;
+  select(category: Category) {
+    console.log(category);
+    this.selectedCategory = category;
   }
   
-  selectSubCategory(category: string) {
-    console.log(category);
-    this.selectedSpendingSubCategory = category;
+  delete() {
+    var removeRef = this.spendingCategoriesRef.child(this.selectedCategory.path);
+    removeRef.remove(this.onComplete);
+    this.selectedCategory = null;
   }
 
   save(inputCategory, inputSubcategory) {
@@ -87,8 +84,6 @@ export class Page4 {
     }
     tempRef.update(o);
     
-    
-
     this.nav.present(Toast.create({
       message: 'Added to Firebase!',
       duration: 500,
@@ -96,5 +91,11 @@ export class Page4 {
     }));
   }
   
-  
+  onComplete = function(error) {
+    if (error) {
+      console.log('Synchronization failed');
+    } else {
+      console.log('Synchronization succeeded');
+    }
+  };
 }

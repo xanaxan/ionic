@@ -4,4 +4,8 @@ ion-tabs ion-navbar-section {
 .spendings-list-item ion-label {
     display: flex;
     justify-content: space-between;
+    margin: 5px 0;
+}
+.spendings-list-item--row {
+    padding: 0;
 }

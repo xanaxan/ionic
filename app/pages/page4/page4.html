@@ -8,11 +8,14 @@
 <ion-content class="page4">
   <ion-list>
     <ion-item *ngFor="#cat of categories">
-      {{cat}}
+      <a (click)="select(cat)">{{cat.text}}</a>
+      <span *ngIf="cat.subcategories" > - </span>
+      <a *ngFor="#subcat of cat.subcategories" (click)="select(subcat)" class="subcategories--link">{{subcat.text}}</a>
     </ion-item>
   </ion-list>
   <ion-input [(ngModel)]="inputCategory" placeholder="Category"></ion-input>
   <ion-input [(ngModel)]="inputSubcategory" placeholder="Subcategory"></ion-input>
   <button (click)="inputSubcategory = undefined; inputCategory = undefined">Clear</button>
   <button (click)="save(inputCategory, inputSubcategory)">Save</button>
+  <button (click)="delete()" *ngIf="selectedCategory" >Delete {{selectedCategory.text}}</button>
 </ion-content>

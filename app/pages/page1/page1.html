@@ -6,7 +6,7 @@
   <ion-list>
     <ion-item-sliding *ngFor="#spending of spendings | orderBy : sorting()">
       <ion-item class="spendings-list-item">
-        <ion-row>
+        <ion-row class="spendings-list-item--row">
           <ion-col width-33>{{spending.date}}</ion-col>
           <ion-col width-33>{{spending.category}}</ion-col>
           <ion-col width-33 text-right>{{spending.amount}} €</ion-col>
